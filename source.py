@@ -9,38 +9,55 @@ class TypeCheck:
         return instance.__dict__[self.name]
 
     def __set__(self, instance, value):
-        if(isinstance(value, instance.__annotations__[self.name])):
+        if( 
+            isinstance(value, instance.__annotations__[self.name][0]) or\
+            isinstance(value, instance.__annotations__[self.name][1])\
+        ):
             instance.__dict__[self.name] = value
         else:
-            raise TypeError(f'this "{value}" is not appropriate for this "{self.name}" variable because, it is of `{instance.__annotations__[self.name].__name__}` type ')
+            if (\
+                    instance.__annotations__[self.name][0].__name__ == \
+                    instance.__annotations__[self.name][0].__name__
+                ):
+                raise ValueError(f'this "{value}" is not appropriate for this "{self.name}" variable because, it is of `{instance.__annotations__[self.name][1].__name__}` type ')
+            else:
+                raise ValueError(f'this "{value}" is not appropriate for this "{self.name}" variable because, it is of `{instance.__annotations__[self.name][0].__name__} or {instance.__annotations__[self.name][1].__name__}` type ')
+
 
 class Person:
     
     """A class of people"""
     
-    name:str
-    age:int
-    email:str
-    
-    name = TypeCheck()
+    age:(int, int)
+    height:(int, int) 
+    name:(str, str)
+    tags:(list, tuple)
+    favorite_foods:(list, tuple)
+
     age = TypeCheck()
-    email = TypeCheck()
+    height = TypeCheck()
+    name = TypeCheck()
+    tags = TypeCheck()
+    favorite_foods = TypeCheck()
 
-    def __init__(self, name, age, email):
-        self.name = name
+
+
+    def __init__(self, age, height, name, tags, favorite_foods):
         self.age = age
-        self.email = email
-
+        self.height = height
+        self.name = name
+        self.tags = tags
+        self.favorite_foods = favorite_foods
 try:
-    person1 = Person('Poxos', 'Hello', 'poxos@poxosyan@gmail.com')
-except TypeError as err:
+    person1 = Person(22, 10, True, [1, 2, 3], ['1', '2'])
+except ValueError as err:
     print(str(err))
 try:
-    person2 = Person('Poxos', 23, 'poxos@poxosyan@gmail.com')
-except TypeError as err:
+    person2 = Person(22, 10, "ddd", False, ['1', '2'])
+except ValueError as err:
     print(str(err))
 try:
-    person3 = Person(True, 'Hello', 'poxos@poxosyan@gmail.com')
-except TypeError as err:
+    person3 = Person("Hello", 10, "ddd", (1, 2), ['1', '2'])
+except ValueError as err:
     print(str(err))
 
